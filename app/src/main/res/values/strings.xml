@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Brand Spotter</string>
+
+    <string name="contact_form">Help and Support</string>
+    <string name="contact_form_button">Submit</string>
+    <string name="contact_form_post_message">Please wait! We\'re sending your message to the support department...</string>
+    <string name="contact_posted">Your message has been successfully delivered.</string>
+
+    <string name="about_story">Our group is a member of the Computer Science class, K16.\n This application is built to help users identify logos they do not know, as well as use gg map to locate their locations. </string>
+
+    <string name="fb_an">
+    <a href="https://www.facebook.com/nguyen.phuc.an.209">An Nguyen</a>
+</string>
+    <string name="insta_an">
+        <a href="https://www.instagram.com/anphuc_an/">Phuc_An</a>
+    </string>
+
+    <string name="fb_tho">
+    <a href="https://www.facebook.com/darwin.robinson.96">Tho Tran</a>
+</string>
+    <string name="insta_tho">
+        <a href="https://www.instagram.com/anphuc_an/">Ba_Tho</a>
+    </string>
+
+    <string name="youtube">
+        <a href="https://www.youtube.com/feed/my_videos">Watch us on Youtube</a>
+    </string>
+    <string name="github">
+        <a href="">Fork us on Github</a>
+    </string>
+
+    <string-array name="maps">
+        <item>Normal</item>
+        <item>Satellite</item>
+        <item>Terrain</item>
+        <item>Hybrid</item>
+    </string-array>
+
+    <string name="map_not_ready">Map is not ready</string>
+
+    <string name="map_key" translatable="false">AIzaSyBhgblyYHS7SPmbHolz9fZjGu0RstoMruQ</string>
+
+</resources>
