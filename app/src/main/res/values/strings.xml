@@ -29,15 +29,15 @@
         <a href="">Fork us on Github</a>
     </string>
 
+    <string name="map_not_ready">Map is not ready</string>
+
+    <string name="map_key" translatable="false">AIzaSyBhgblyYHS7SPmbHolz9fZjGu0RstoMruQ</string>
+
     <string-array name="maps">
         <item>Normal</item>
         <item>Satellite</item>
         <item>Terrain</item>
         <item>Hybrid</item>
     </string-array>
-
-    <string name="map_not_ready">Map is not ready</string>
-
-    <string name="map_key" translatable="false">AIzaSyBhgblyYHS7SPmbHolz9fZjGu0RstoMruQ</string>
 
 </resources>
