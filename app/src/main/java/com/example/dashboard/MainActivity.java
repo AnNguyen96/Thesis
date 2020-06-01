@@ -46,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intentMap);
             }
         });
+
+//        Button btnSaved = (Button) findViewById(R.id.btnSaved);
+//        btnSaved.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intentSaved = new Intent(MainActivity.this, AddPage.class);
+//                startActivity(intentSaved);
+//            }
+//        });
     }
 
     public boolean isServicesOK(){
