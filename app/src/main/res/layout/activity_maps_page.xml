@@ -23,6 +23,17 @@
         android:elevation="5dp"
         android:background="@drawable/bg_search"/>
 
+<!--    <ImageView-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginRight="10dp"-->
+<!--        android:layout_marginTop="10dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:id="@+id/ic_compass"-->
+<!--        android:layout_below="@+id/sv_location"-->
+<!--        android:layout_toLeftOf="@+id/ic_gps"-->
+<!--        android:src="@drawable/direction"/>-->
+
     <ImageView
         android:layout_width="40dp"
         android:layout_height="40dp"

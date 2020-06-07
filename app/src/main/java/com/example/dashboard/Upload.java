@@ -25,6 +25,7 @@ public class Upload {
     public void setName(String name) {
         mName = name;
     }
+
     public String getImageUrl() {
         return mImageUrl;
     }

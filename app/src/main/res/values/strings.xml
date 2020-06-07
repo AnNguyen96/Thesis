@@ -33,6 +33,7 @@
 
     <string name="map_key" translatable="false">AIzaSyBhgblyYHS7SPmbHolz9fZjGu0RstoMruQ</string>
 
+    <string name="title_activity_find_direction">Map</string>
     <string-array name="maps">
         <item>Normal</item>
         <item>Satellite</item>

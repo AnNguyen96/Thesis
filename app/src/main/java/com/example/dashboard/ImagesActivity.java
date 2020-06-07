@@ -1,5 +1,6 @@
 package com.example.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -22,6 +23,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class ImagesActivity extends AppCompatActivity implements ImageAdapter.OnItemClickListener {
+
+    public static final String EXTRA_URL = "imageUrl";
+    public static final String EXTRA_NAME = "brandName";
 
     private RecyclerView mRecyclerView;
     private ImageAdapter mAdapter;
@@ -81,7 +85,14 @@ public class ImagesActivity extends AppCompatActivity implements ImageAdapter.On
 
     @Override
     public void onItemClick(int position) {
-        Toast.makeText(this, "Normal click at position: " + position, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Normal click at position: " + position, Toast.LENGTH_SHORT).show();
+        Intent detailIntent = new Intent(this, DetailActivity.class);
+        Upload clickedItem = mUploads.get(position);
+
+        detailIntent.putExtra(EXTRA_URL, clickedItem.getImageUrl());
+        detailIntent.putExtra(EXTRA_NAME, clickedItem.getName());
+
+        startActivity(detailIntent);
     }
 
     @Override

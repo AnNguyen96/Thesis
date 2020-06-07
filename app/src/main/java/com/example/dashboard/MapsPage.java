@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -23,20 +22,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -44,15 +36,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     SupportMapFragment mapFragment;
     SearchView searchView;
     Spinner spinner;
-    private ImageView mGps;
+    private ImageView mGps, mCompass;
     private Boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -63,20 +53,17 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15f;
 
-    private static final LatLng PERTH = new LatLng(-31.952854, 115.857342);
-    private static final LatLng SYDNEY = new LatLng(-33.87365, 151.20689);
-    private static final LatLng BRISBANE = new LatLng(-27.47093, 153.0235);
-
-    private Marker mPerth;
-    private Marker mSydney;
-    private Marker mBrisbane;
-
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         mMap = googleMap;
+
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(true);
+        mMap.getUiSettings().setCompassEnabled(true);
 
         if (mLocationPermissionsGranted) {
             getDeviceLocation();
@@ -86,41 +73,16 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
-            mMap.getUiSettings().setZoomControlsEnabled(true);
-            mMap.getUiSettings().setMapToolbarEnabled(false);
 
             init();
         }
-
-        // Add some markers to the map, and add a data object to each marker.
-        mPerth = mMap.addMarker(new MarkerOptions()
-                .position(PERTH)
-                .title("Perth")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
-                .snippet("This is the city I want to study abroad"));
-        mPerth.setTag(0);
-        mPerth.hideInfoWindow();
-
-        mSydney = mMap.addMarker(new MarkerOptions()
-                .position(SYDNEY)
-                .title("Sydney")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        mSydney.setTag(0);
-
-        mBrisbane = mMap.addMarker(new MarkerOptions()
-                .position(BRISBANE)
-                .title("Brisbane")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        mBrisbane.setTag(0);
 
         mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
 
     }
 
     public boolean onMarkerClick(final Marker marker) {
-        Toast.makeText(this, "abc", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -130,11 +92,19 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
         setContentView(R.layout.activity_maps_page);
 
         mGps = (ImageView) findViewById(R.id.ic_gps);
+        //mCompass = findViewById(R.id.ic_compass);
         searchView = findViewById(R.id.sv_location);
         spinner = (Spinner) findViewById(R.id.spinner);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mCompass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMap.getUiSettings().setCompassEnabled(true);
+                Toast.makeText(MapsPage.this,"clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         serach();
         spinner();
@@ -162,7 +132,7 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
                     Address address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,12));
                 }
 
                 return false;
@@ -218,6 +188,8 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
             }
         });
 
+
+
         hideSoftKeyboard();
     }
 
@@ -239,6 +211,7 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
 
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM);
+
 
                         }else{
                             Log.d(TAG, "onComplete: current location is null");

@@ -1,7 +1,5 @@
 package com.example.dashboard;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,12 +8,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        Button btnSaved = (Button) findViewById(R.id.btnSaved);
-//        btnSaved.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intentSaved = new Intent(MainActivity.this, AddPage.class);
-//                startActivity(intentSaved);
-//            }
-//        });
+        Button btnSaved = (Button) findViewById(R.id.btnSaved);
+        btnSaved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentSaved = new Intent(MainActivity.this, AddBrand.class);
+                startActivity(intentSaved);
+            }
+        });
     }
 
     public boolean isServicesOK(){
