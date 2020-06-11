@@ -95,7 +95,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button1"
+                    android:id="@+id/wikiBtn"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
@@ -109,7 +109,7 @@
                     android:text="Wiki" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/webBtn"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
@@ -123,7 +123,7 @@
                     android:text="Website" />
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/mapBtn"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="100dp"
                     android:layout_height="50dp"
