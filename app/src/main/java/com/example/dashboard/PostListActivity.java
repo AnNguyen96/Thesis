@@ -22,11 +22,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
 
@@ -69,6 +77,54 @@ public class PostListActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference("Data");
+    }
+
+    private void showDeleteDialog(final String currentTitle, final String currentImage) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(PostListActivity.this);
+        builder.setTitle("Delete");
+        builder.setMessage("Are you sure?");
+
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Query mQuery = mRef.orderByChild("title").equalTo(currentTitle);
+                mQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds: dataSnapshot.getChildren()){
+                            ds.getRef().removeValue();
+                        }
+                        Toast.makeText(PostListActivity.this, "Brand deleted successfully", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(PostListActivity.this, databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                StorageReference mPictureRefe = FirebaseStorage.getInstance().getReferenceFromUrl(currentImage);
+                mPictureRefe.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(PostListActivity.this,"Image deleted successfully", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(PostListActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     private void firebaseSearch (String searchText){
@@ -114,7 +170,10 @@ public class PostListActivity extends AppCompatActivity {
 
                     @Override
                     public void onItemLongClick(View view, int position) {
-                        //TODO
+                        String currentTitle = getItem(position).getTitle();
+                        String currentImage = getItem(position).getImage();
+
+                        showDeleteDialog(currentTitle, currentImage);
                     }
                 });
 
@@ -155,6 +214,11 @@ public class PostListActivity extends AppCompatActivity {
 
         if (id == R.id.action_sort){
             showSortDialog();
+            return true;
+        }
+
+        if (id == R.id.action_add){
+            startActivity(new Intent(PostListActivity.this, AddPostActivity.class));
             return true;
         }
 
@@ -228,7 +292,10 @@ public class PostListActivity extends AppCompatActivity {
 
                     @Override
                     public void onItemLongClick(View view, int position) {
-                        //TODO
+                        String currentTitle = getItem(position).getTitle();
+                        String currentImage = getItem(position).getImage();
+
+                        showDeleteDialog(currentTitle, currentImage);
                     }
                 });
 
@@ -239,4 +306,6 @@ public class PostListActivity extends AppCompatActivity {
 
         mRecyclerView.setAdapter(firebaseRecyclerAdapter);
     }
+
+
 }

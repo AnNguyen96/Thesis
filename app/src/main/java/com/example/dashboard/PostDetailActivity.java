@@ -3,8 +3,12 @@ package com.example.dashboard;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -15,6 +19,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -101,6 +107,8 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+
+
         mShareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,14 +128,16 @@ public class PostDetailActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
                 Locale.getDefault()).format(System.currentTimeMillis());
 
-        File path = new File(Environment.getExternalStorageDirectory().toString());
+        File path = Environment.getExternalStorageDirectory().getAbsoluteFile();
 
-        File dir = new File(path + "/Brand/");
+        File dir = new File(path + "/Brand");
         dir.mkdirs();
 
         String imageName = timeStamp + ".PNG";
         File file = new File(dir, imageName);
-        OutputStream out;
+        FileOutputStream out = null;
+
+        Toast.makeText(PostDetailActivity.this, "Saved abc", Toast.LENGTH_SHORT).show();
 
         try {
             out = new FileOutputStream(file);
@@ -137,9 +147,10 @@ public class PostDetailActivity extends AppCompatActivity {
             Toast.makeText(this, imageName + " saved to" + dir, Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "e.getMessage()", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -160,4 +171,6 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         }
     }
+
+
 }
