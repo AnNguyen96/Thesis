@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,12 +22,21 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
+
+import static com.google.firebase.storage.FirebaseStorage.getInstance;
 
 public class AddPostActivity extends AppCompatActivity {
 
@@ -46,6 +56,8 @@ public class AddPostActivity extends AppCompatActivity {
 
     int IMAGE_REQUEST_CODE = 5;
 
+    String cTitle, cDescr, cImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +70,20 @@ public class AddPostActivity extends AppCompatActivity {
         mDescrEt = findViewById(R.id.pDescrEt);
         mPostIv = findViewById(R.id.pImageIv);
         mUploadBtn = findViewById(R.id.pUploadBtn);
+
+        Bundle intent = getIntent().getExtras();
+        if(intent != null){
+            cTitle = intent.getString("cTitle");
+            cDescr = intent.getString("cDescr");
+            cImage = intent.getString("cImage");
+
+            mTitleEt.setText(cTitle);
+            mDescrEt.setText(cDescr);
+            Picasso.get().load(cImage).into(mPostIv);
+
+            actionBar.setTitle("Update Post");
+            mUploadBtn.setText("Update");
+        }
 
         mPostIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,14 +98,105 @@ public class AddPostActivity extends AppCompatActivity {
         mUploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadDataToFirebase();
+                if(mUploadBtn.getText().equals("Upload")){
+                    uploadDataToFirebase();
+                }
+                else{
+                    beginUpdate();
+                }
+
+
             }
         });
 
-        mStorageReference = FirebaseStorage.getInstance().getReference();
+        mStorageReference = getInstance().getReference();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference(mDatabasePath);
 
         mProgressDialog = new ProgressDialog(AddPostActivity.this);
+    }
+
+    private void beginUpdate() {
+        mProgressDialog.setMessage("Updating..");
+        mProgressDialog.show();
+
+        deletePreviousImage();
+    }
+
+    private void deletePreviousImage() {
+        StorageReference mPictureRef = getInstance().getReferenceFromUrl(cImage);
+        mPictureRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(AddPostActivity.this, "Previous brand deleted..", Toast.LENGTH_SHORT).show();
+
+                uploadNewImage();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(AddPostActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
+                        mProgressDialog.dismiss();
+                    }
+                });
+    }
+
+    private void uploadNewImage() {
+        String imageName = System.currentTimeMillis() + ".png";
+
+        StorageReference storageReference2 = mStorageReference.child(mStoragePath + imageName);
+
+        Bitmap bitmap = ((BitmapDrawable)mPostIv.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] data = baos.toByteArray();
+        UploadTask uploadTask = storageReference2.putBytes(data);
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(AddPostActivity.this, "New image uploaded..", Toast.LENGTH_SHORT).show();
+
+                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                while (!uriTask.isSuccessful());
+                Uri downloadUri = uriTask.getResult();
+                updateDatabase(downloadUri.toString());
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(AddPostActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                mProgressDialog.dismiss();
+            }
+        });
+    }
+
+    private void updateDatabase(final String s) {
+        final String title = mTitleEt.getText().toString();
+        final String descr = mDescrEt.getText().toString();
+        FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference mRef = mFirebaseDatabase.getReference("Data");
+
+        Query query = mRef.orderByChild("title").equalTo(cTitle);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds: dataSnapshot.getChildren()){
+                    ds.getRef().child("title").setValue(title);
+                    ds.getRef().child("search").setValue(title.toLowerCase());
+                    ds.getRef().child("description").setValue(descr);
+                    ds.getRef().child("image").setValue(s);
+                }
+                mProgressDialog.dismiss();
+                Toast.makeText(AddPostActivity.this, "Database Updated", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(AddPostActivity.this, PostListActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void uploadDataToFirebase(){

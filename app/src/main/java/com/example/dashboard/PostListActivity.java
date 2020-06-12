@@ -15,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -46,6 +48,9 @@ public class PostListActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     FirebaseDatabase mFirebaseDatabase;
     DatabaseReference mRef;
+
+    FirebaseRecyclerAdapter<Model,ViewHolder> firebaseRecyclerAdapter;
+    FirebaseRecyclerOptions<Model> options;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +78,16 @@ public class PostListActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.recyclerView);
         mRecyclerView.setHasFixedSize(true);
 
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mRef = mFirebaseDatabase.getReference("Data");
+
+        showData();
     }
 
     private void showDeleteDialog(final String currentTitle, final String currentImage) {
         AlertDialog.Builder builder = new AlertDialog.Builder(PostListActivity.this);
         builder.setTitle("Delete");
-        builder.setMessage("Are you sure?");
+        builder.setMessage("Are you sure to delete this brand?");
 
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
@@ -127,60 +132,144 @@ public class PostListActivity extends AppCompatActivity {
         builder.create().show();
     }
 
-    private void firebaseSearch (String searchText){
+    private void showData(){
+        options = new FirebaseRecyclerOptions.Builder<Model>().setQuery(mRef, Model.class).build();
 
-        String query = searchText.toLowerCase();
-
-        Query firebaseSearchQuery = mRef.orderByChild("search").startAt(query).endAt(query + "\uf8ff");
-
-        FirebaseRecyclerAdapter<Model, ViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(
-                Model.class, R.layout.row, ViewHolder.class, firebaseSearchQuery
-        ) {
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(options) {
             @Override
-            protected void populateViewHolder(ViewHolder viewHolder, Model model, int i) {
-
+            protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Model model) {
                 viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
             }
 
+            @NonNull
             @Override
-            public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
 
-                ViewHolder viewHolder = super.onCreateViewHolder(parent,viewType);
+                ViewHolder viewHolder = new ViewHolder(itemView);
+
                 viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                        TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
-                        ImageView mImageView = view.findViewById(R.id.rImageView);
-
-                        String mTitle = mTitleTv.getText().toString();
-                        String mDesc = mDescTv.getText().toString();
-                        Drawable mDrawable = mImageView.getDrawable();
-                        Bitmap mBitmap = ((BitmapDrawable)mDrawable).getBitmap();
+                        String mTitle = getItem(position).getTitle();
+                        String mDesc = getItem(position).getDescription();
+                        String mImage = getItem(position).getImage();
 
                         Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        byte[] bytes = stream.toByteArray();
-                        intent.putExtra("image", bytes);
                         intent.putExtra("title", mTitle);
                         intent.putExtra("description", mDesc);
+                        intent.putExtra("image", mImage);
                         startActivity(intent);
                     }
 
                     @Override
                     public void onItemLongClick(View view, int position) {
-                        String currentTitle = getItem(position).getTitle();
-                        String currentImage = getItem(position).getImage();
+                        final String cTitle = getItem(position).getTitle();
+                        final String cDescr = getItem(position).getDescription();
+                        final String cImage = getItem(position).getImage();
 
-                        showDeleteDialog(currentTitle, currentImage);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PostListActivity.this);
+                        String[] options = {"Update", "Delete"};
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (i == 0 ){
+                                    Intent intent = new Intent(PostListActivity.this, AddPostActivity.class);
+                                    intent.putExtra("cTitle", cTitle);
+                                    intent.putExtra("cDescr", cDescr);
+                                    intent.putExtra("cImage", cImage);
+                                    startActivity(intent);
+                                }
+                                if (i == 1){
+
+
+                                    showDeleteDialog(cTitle, cImage);
+                                }
+                            }
+                        });
+                        builder.create().show();
                     }
                 });
 
                 return viewHolder;
             }
         };
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        firebaseRecyclerAdapter.startListening();
+        mRecyclerView.setAdapter(firebaseRecyclerAdapter);
+    }
 
+    private void firebaseSearch (String searchText){
+
+        String query = searchText.toLowerCase();
+
+        Query firebaseSearchQuery = mRef.orderByChild("search").startAt(query).endAt(query + "\uf8ff");
+
+        options = new FirebaseRecyclerOptions.Builder<Model>().setQuery(firebaseSearchQuery, Model.class).build();
+
+        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Model model) {
+                viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
+            }
+
+            @NonNull
+            @Override
+            public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
+
+                ViewHolder viewHolder = new ViewHolder(itemView);
+
+                viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        String mTitle = getItem(position).getTitle();
+                        String mDesc = getItem(position).getDescription();
+                        String mImage = getItem(position).getImage();
+
+                        Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
+                        intent.putExtra("title", mTitle);
+                        intent.putExtra("description", mDesc);
+                        intent.putExtra("image", mImage);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onItemLongClick(View view, int position) {
+                        final String cTitle = getItem(position).getTitle();
+                        final String cDescr = getItem(position).getDescription();
+                        final String cImage = getItem(position).getImage();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PostListActivity.this);
+                        String[] options = {"Update", "Delete"};
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                if (i == 0 ){
+                                    Intent intent = new Intent(PostListActivity.this, AddPostActivity.class);
+                                    intent.putExtra("cTitle", cTitle);
+                                    intent.putExtra("cDescr", cDescr);
+                                    intent.putExtra("cImage", cImage);
+                                    startActivity(intent);
+                                }
+                                if (i == 1){
+
+
+                                    showDeleteDialog(cTitle, cImage);
+                                }
+                            }
+                        });
+                        builder.create().show();
+                    }
+                });
+
+                return viewHolder;
+            }
+        };
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        firebaseRecyclerAdapter.startListening();
         mRecyclerView.setAdapter(firebaseRecyclerAdapter);
     }
 
@@ -256,56 +345,9 @@ public class PostListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseRecyclerAdapter<Model, ViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(
-                Model.class, R.layout.row, ViewHolder.class, mRef
-        ) {
-            @Override
-            protected void populateViewHolder(ViewHolder viewHolder, Model model, int i) {
-                viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
-            }
-
-            @Override
-            public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-                ViewHolder viewHolder = super.onCreateViewHolder(parent,viewType);
-                viewHolder.setOnClickListener(new ViewHolder.ClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        TextView mTitleTv = view.findViewById(R.id.rTitleTv);
-                        TextView mDescTv = view.findViewById(R.id.rDescriptionTv);
-                        ImageView mImageView = view.findViewById(R.id.rImageView);
-
-                        String mTitle = mTitleTv.getText().toString();
-                        String mDesc = mDescTv.getText().toString();
-                        Drawable mDrawable = mImageView.getDrawable();
-                        Bitmap mBitmap = ((BitmapDrawable)mDrawable).getBitmap();
-
-                        Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        byte[] bytes = stream.toByteArray();
-                        intent.putExtra("image", bytes);
-                        intent.putExtra("title", mTitle);
-                        intent.putExtra("description", mDesc);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onItemLongClick(View view, int position) {
-                        String currentTitle = getItem(position).getTitle();
-                        String currentImage = getItem(position).getImage();
-
-                        showDeleteDialog(currentTitle, currentImage);
-                    }
-                });
-
-                return viewHolder;
-            }
-
-        };
-
-        mRecyclerView.setAdapter(firebaseRecyclerAdapter);
+        if (firebaseRecyclerAdapter != null){
+            firebaseRecyclerAdapter.startListening();
+        }
     }
-
 
 }

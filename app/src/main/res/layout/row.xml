@@ -32,6 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:text="The description will be here"
             android:textSize="20sp"/>
     </LinearLayout>

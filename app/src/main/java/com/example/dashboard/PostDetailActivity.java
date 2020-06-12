@@ -68,8 +68,10 @@ public class PostDetailActivity extends AppCompatActivity {
         mWeb = findViewById(R.id.webBtn);
         mMap = findViewById(R.id.mapBtn);
 
-        byte[] bytes = getIntent().getByteArrayExtra("image");
-        Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+//        byte[] bytes = getIntent().getByteArrayExtra("image");
+//        Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+
+        String image = getIntent().getStringExtra("image");
         String title = getIntent().getStringExtra("title");
         String desc = getIntent().getStringExtra("description");
         final String wiki = getIntent().getStringExtra("wiki");
@@ -78,7 +80,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
         mTitleTv.setText(title);
         mDetailTv.setText(desc);
-        mImageIv.setImageBitmap(bmp);
+        //mImageIv.setImageBitmap(bmp);
+        Picasso.get().load(image).into(mImageIv);
 
         mWiki.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,8 +117,7 @@ public class PostDetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent myIntent = new Intent(Intent.ACTION_SEND);
                 myIntent.setType("text/plain");
-                String shareBody = "Your body is here";
-                String shareSub = "Your subject";
+                String shareBody = "Share this brand with other people";
                 myIntent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
                 myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(myIntent, "Share using"));
@@ -147,7 +149,7 @@ public class PostDetailActivity extends AppCompatActivity {
             Toast.makeText(this, imageName + " saved to" + dir, Toast.LENGTH_SHORT).show();
         }
         catch (Exception e){
-            Toast.makeText(this, "e.getMessage()", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

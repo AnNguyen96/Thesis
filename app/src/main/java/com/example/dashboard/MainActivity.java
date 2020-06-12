@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         btnSaved.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intentSaved = new Intent(MainActivity.this, AddBrand.class);
+                Intent intentSaved = new Intent(MainActivity.this, PostListActivity.class);
                 startActivity(intentSaved);
             }
         });
