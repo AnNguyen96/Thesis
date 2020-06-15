@@ -27,6 +27,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -48,6 +53,11 @@ public class PostDetailActivity extends AppCompatActivity {
 
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
 
+    FirebaseDatabase mFirebaseDatabase;
+    DatabaseReference mRefWiki;
+    DatabaseReference mRefWeb;
+    DatabaseReference mRefMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +78,6 @@ public class PostDetailActivity extends AppCompatActivity {
         mWeb = findViewById(R.id.webBtn);
         mMap = findViewById(R.id.mapBtn);
 
-//        byte[] bytes = getIntent().getByteArrayExtra("image");
-//        Bitmap bmp = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
 
         String image = getIntent().getStringExtra("image");
         String title = getIntent().getStringExtra("title");
@@ -80,15 +88,81 @@ public class PostDetailActivity extends AppCompatActivity {
 
         mTitleTv.setText(title);
         mDetailTv.setText(desc);
-        //mImageIv.setImageBitmap(bmp);
         Picasso.get().load(image).into(mImageIv);
 
-        mWiki.setOnClickListener(new View.OnClickListener() {
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        //mRef = mFirebaseDatabase.getReference("Data");
+        //String s = mRef.getRef().getKey();
+        //mRefWiki = mRef.child("01").child("wiki");
+
+        mRefWiki = mFirebaseDatabase.getReference("Data").child("01").child("wiki");
+
+        mRefWiki.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                String url = wiki;
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intent);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    final String value = dataSnapshot.getValue(String.class);
+                    mWiki.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(value));
+                            startActivity(i);
+                        }
+                    });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        mRefWeb = mFirebaseDatabase.getReference("Data").child("01").child("website");
+
+        mRefWeb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String value = dataSnapshot.getValue(String.class);
+                mWeb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(value));
+                        startActivity(i);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+        mRefMap = mFirebaseDatabase.getReference("Data").child("01").child("map");
+
+        mRefMap.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String value = dataSnapshot.getValue(String.class);
+                mMap.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(value));
+                        startActivity(i);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 

@@ -92,19 +92,12 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
         setContentView(R.layout.activity_maps_page);
 
         mGps = (ImageView) findViewById(R.id.ic_gps);
-        //mCompass = findViewById(R.id.ic_compass);
         searchView = findViewById(R.id.sv_location);
         spinner = (Spinner) findViewById(R.id.spinner);
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mCompass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMap.getUiSettings().setCompassEnabled(true);
-                Toast.makeText(MapsPage.this,"clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
+
 
         serach();
         spinner();

@@ -17,6 +17,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -43,6 +44,7 @@ public class AddPostActivity extends AppCompatActivity {
     EditText mTitleEt, mDescrEt;
     ImageView mPostIv;
     Button mUploadBtn;
+    ProgressBar mProgressBar;
 
     String mStoragePath = "uploads/";
     String mDatabasePath = "Data";
@@ -66,10 +68,14 @@ public class AddPostActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add new brand");
 
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
         mTitleEt = findViewById(R.id.pTitleEt);
         mDescrEt = findViewById(R.id.pDescrEt);
         mPostIv = findViewById(R.id.pImageIv);
         mUploadBtn = findViewById(R.id.pUploadBtn);
+        mProgressBar = findViewById(R.id.progress_bar);
 
         Bundle intent = getIntent().getExtras();
         if(intent != null){
@@ -234,7 +240,9 @@ public class AddPostActivity extends AppCompatActivity {
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
-                            mProgressDialog.setTitle("Uploading..");
+                            //mProgressDialog.setTitle("Uploading..");
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount());
+                            mProgressBar.setProgress((int) progress);
                         }
                     });
         }

@@ -5,6 +5,12 @@ public class Model {
 
     public Model(){}
 
+    public Model(String title, String image, String description) {
+        this.title = title;
+        this.image = image;
+        this.description = description;
+    }
+
     public String getTitle() {
         return title;
     }
