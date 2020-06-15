@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.love:
-                Toast.makeText(this, "Item 1 selected", Toast.LENGTH_SHORT).show();
-                return true;
+//            case R.id.love:
+//                Toast.makeText(this, "Item 1 selected", Toast.LENGTH_SHORT).show();
+//                return true;
             case R.id.help:
                 Intent intentHelp = new Intent(MainActivity.this, HelpPage.class);
                 startActivity(intentHelp);

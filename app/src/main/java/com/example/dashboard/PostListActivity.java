@@ -60,6 +60,9 @@ public class PostListActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Brands List");
 
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
         mSharedPref = getSharedPreferences("SortSettings", MODE_PRIVATE);
         String mSorting = mSharedPref.getString("Sort", "newest");
 
@@ -348,6 +351,12 @@ public class PostListActivity extends AppCompatActivity {
         if (firebaseRecyclerAdapter != null){
             firebaseRecyclerAdapter.startListening();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
 }

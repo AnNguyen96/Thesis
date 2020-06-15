@@ -33,6 +33,7 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -90,6 +91,12 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps_page);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Map");
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         mGps = (ImageView) findViewById(R.id.ic_gps);
         searchView = findViewById(R.id.sv_location);
@@ -281,4 +288,9 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
     }
 
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

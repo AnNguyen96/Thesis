@@ -1,5 +1,6 @@
 package com.example.dashboard;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -20,6 +21,12 @@ public class ContactPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact_page);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Email us for help");
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         final EditText your_name        = (EditText) findViewById(R.id.your_name);
         final EditText your_email       = (EditText) findViewById(R.id.your_email);
@@ -107,5 +114,11 @@ public class ContactPage extends AppCompatActivity {
         Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.dashboard;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -33,6 +34,12 @@ public class AboutPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about_page);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Know more about us");
+
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
 
         textyoutube = findViewById(R.id.text_youtube);
         textyoutube.setMovementMethod(LinkMovementMethod.getInstance());
@@ -81,5 +88,11 @@ public class AboutPage extends AppCompatActivity {
                 startActivity(sharedIntent, options.toBundle());
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

@@ -24,19 +24,15 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <activity
-            android:name=".MapsPage"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".MapsPage" />
         <activity android:name=".SharedActivity2" />
         <activity android:name=".SharedActivity1" />
         <activity
-            android:name=".AboutPage"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".AboutPage"/>
         <activity
-            android:name=".ContactPage"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".ContactPage" />
         <activity
-            android:name=".HelpPage"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:name=".HelpPage"/>
         <activity
             android:name=".SplashScreen"
             android:theme="@style/AppTheme.NoActionBar" >
