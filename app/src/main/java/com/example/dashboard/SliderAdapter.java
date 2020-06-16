@@ -24,19 +24,22 @@ public class SliderAdapter extends PagerAdapter {
     public int[] slide_image = {
             R.drawable.slide1,
             R.drawable.slide2,
-            R.drawable.slide3
+            R.drawable.slide3,
+            R.drawable.slide4
     };
 
     public String[] slide_heading = {
-            "LOGO DETECT",
-            "GALLERY ",
-            "MAP"
+            "DETECT LOGO FROM CAMERA",
+            "DETECT LOGO FROM GALLERY",
+            "MAP",
+            "LIST OF BRANDS"
     };
 
     public String[] slide_descript = {
-            "Setting the gravity of the RelativeLayout itself will affect all of the objects placed inside of it.",
-            "Just use the second example, and only add centerInParent to the button that you want centered. You can also use centerHorizontal.",
-            "Setting the gravity of the RelativeLayout itself will affect all of the objects placed inside of it."
+            "when click this button, camera will open, you should move camera to position which has a logo and click detect button.",
+            "Just the same with first button, but you can choose picture which contains logo from gallery to detect.",
+            "Map will show with some basic features such as searching, changing type of map, showing your current location, guiding directions, etc.",
+            "Show list of brands, you can search, sort, save or share brands, even upload, update and delete brands."
     };
 
     @Override

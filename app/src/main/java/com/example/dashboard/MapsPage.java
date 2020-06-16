@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -52,7 +53,7 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM = 18f;
 
 
     @Override
@@ -106,12 +107,12 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
 
 
 
-        serach();
+        search();
         spinner();
         getLocationPermission();
     }
 
-    private void serach(){
+    private void search(){
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -132,7 +133,7 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
                     Address address = addressList.get(0);
                     LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,12));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
                 }
 
                 return false;
@@ -211,6 +212,11 @@ public class MapsPage extends AppCompatActivity implements OnMapReadyCallback, G
 
                             moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
                                     DEFAULT_ZOOM);
+                            LatLng current = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                            mMap.addMarker(new MarkerOptions()
+                                    .title("I'm here")
+                                    .position(current)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
 
                         }else{

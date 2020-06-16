@@ -66,7 +66,7 @@ public class HelpPage extends AppCompatActivity {
     }
 
     public void addDotsIndicator(int position){
-        mDots = new TextView[3];
+        mDots = new TextView[4];
         mDotLayout.removeAllViews();
 
         for (int i = 0; i<mDots.length; i++){
@@ -79,7 +79,7 @@ public class HelpPage extends AppCompatActivity {
         }
 
         if (mDots.length > 0){
-            mDots[position].setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            mDots[position].setTextColor(getResources().getColor(R.color.colorPrimary));
         }
     }
 

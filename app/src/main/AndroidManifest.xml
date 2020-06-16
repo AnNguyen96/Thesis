@@ -23,8 +23,8 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-        <activity
-            android:name=".MapsPage" />
+        <activity android:name=".MapsPage" >
+        </activity>
         <activity android:name=".SharedActivity2" />
         <activity android:name=".SharedActivity1" />
         <activity
@@ -32,17 +32,20 @@
         <activity
             android:name=".ContactPage" />
         <activity
-            android:name=".HelpPage"/>
+            android:name=".HelpPage">
+
+        </activity>
         <activity
             android:name=".SplashScreen"
             android:theme="@style/AppTheme.NoActionBar" >
+
+        </activity>
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name=".MainActivity" >
         </activity>
 
         <meta-data
