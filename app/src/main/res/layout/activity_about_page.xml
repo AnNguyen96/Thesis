@@ -116,7 +116,7 @@
                                 android:id="@+id/profile_desc1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Description something"
+                                android:text="Click here for more details"
                                 android:transitionName="descTransition"
                                 android:textColor="#00676B"/>
 
@@ -182,7 +182,7 @@
                                 android:id="@+id/profile_desc2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Description something"
+                                android:text="Click here for more details"
                                 android:textColor="#976D00"/>
 
                         </LinearLayout>

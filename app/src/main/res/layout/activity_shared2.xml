@@ -44,8 +44,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:layout_marginRight="70dp"
-        android:fontFamily="@font/croissant_one"
-        android:text="helloehfiefhiasfojsdihfhdfhiidhiasfbiasbfiafknafknafknkafnk"
+        android:text="I am responsible for building a logo identification model along with steps such as collecting, processing, training data and evaluating results."
         android:textAlignment="center"
         android:textSize="18sp"
         android:transitionName="descTransition" />

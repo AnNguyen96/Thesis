@@ -58,8 +58,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:layout_marginRight="70dp"
-        android:fontFamily="@font/croissant_one"
-        android:text="helloehfiefhiasfojsdihfhdfhiidhiasfbiasbfiafknafknafknkafnk"
+        android:text="I am responsible for building applications that use technologies such as connecting firebase to recycler view to perform tasks, putting google maps as well as embedding models into apps."
         android:textAlignment="center"
         android:textSize="18sp"
         android:transitionName="descTransition" />

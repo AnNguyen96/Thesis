@@ -10,11 +10,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddPostActivity"></activity>
+        <activity android:name=".CameraDetect"></activity>
+        <activity android:name=".AddPostActivity" />
         <activity android:name=".PostDetailActivity" />
-        <activity android:name=".PostListActivity">
-
-        </activity>
+        <activity android:name=".PostListActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -23,24 +22,16 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-        <activity android:name=".MapsPage" >
-        </activity>
+        <activity android:name=".MapsPage"></activity>
         <activity android:name=".SharedActivity2" />
         <activity android:name=".SharedActivity1" />
-        <activity
-            android:name=".AboutPage"/>
-        <activity
-            android:name=".ContactPage" />
-        <activity
-            android:name=".HelpPage">
-
-        </activity>
+        <activity android:name=".AboutPage" />
+        <activity android:name=".ContactPage" />
+        <activity android:name=".HelpPage"></activity>
         <activity
             android:name=".SplashScreen"
-            android:theme="@style/AppTheme.NoActionBar" >
-
-        </activity>
-        <activity android:name=".MainActivity" >
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
