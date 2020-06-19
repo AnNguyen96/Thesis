@@ -37,6 +37,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init(){
+        Button btnCamera = findViewById(R.id.btncamera);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentCamera = new Intent(MainActivity.this, CameraDetect.class);
+                startActivity(intentCamera);
+            }
+        });
+
         Button btnMap = (Button) findViewById(R.id.btnmap);
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override

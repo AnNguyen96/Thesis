@@ -141,7 +141,7 @@ public class PostListActivity extends AppCompatActivity {
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Model model) {
-                viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
+                viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage(), model.getWiki(), model.getWebsite(), model.getMap());
             }
 
             @NonNull
@@ -157,11 +157,17 @@ public class PostListActivity extends AppCompatActivity {
                         String mTitle = getItem(position).getTitle();
                         String mDesc = getItem(position).getDescription();
                         String mImage = getItem(position).getImage();
+                        String mWiki = getItem(position).getWiki();
+                        String mWeb = getItem(position).getWebsite();
+                        String mMap = getItem(position).getMap();
 
                         Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
                         intent.putExtra("title", mTitle);
                         intent.putExtra("description", mDesc);
                         intent.putExtra("image", mImage);
+                        intent.putExtra("wiki", mWiki);
+                        intent.putExtra("website", mWeb);
+                        intent.putExtra("map", mMap);
                         startActivity(intent);
                     }
 
@@ -214,7 +220,7 @@ public class PostListActivity extends AppCompatActivity {
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull ViewHolder viewHolder, int i, @NonNull Model model) {
-                viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage());
+                viewHolder.setDetails(getApplicationContext(), model.getTitle(), model.getDescription(), model.getImage(), model.getWiki(), model.getWebsite(), model.getMap());
             }
 
             @NonNull
@@ -230,11 +236,17 @@ public class PostListActivity extends AppCompatActivity {
                         String mTitle = getItem(position).getTitle();
                         String mDesc = getItem(position).getDescription();
                         String mImage = getItem(position).getImage();
+                        String mWiki = getItem(position).getWiki();
+                        String mWeb = getItem(position).getWebsite();
+                        String mMap = getItem(position).getMap();
 
                         Intent intent = new Intent(view.getContext(), PostDetailActivity.class);
                         intent.putExtra("title", mTitle);
                         intent.putExtra("description", mDesc);
                         intent.putExtra("image", mImage);
+                        intent.putExtra("wiki", mWiki);
+                        intent.putExtra("website", mWeb);
+                        intent.putExtra("map", mMap);
                         startActivity(intent);
                     }
 

@@ -35,7 +35,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void setDetails (Context ctx, String title, String description, String image){
+    public void setDetails (Context ctx, String title, String description, String image, String wiki, String website, String map){
         TextView mTitleTv = mView.findViewById(R.id.rTitleTv);
         TextView mDetailTv = mView.findViewById(R.id.rDescriptionTv);
         ImageView mImageIv = mView.findViewById(R.id.rImageView);

@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -33,14 +35,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 public class PostDetailActivity extends AppCompatActivity {
@@ -48,15 +54,9 @@ public class PostDetailActivity extends AppCompatActivity {
     TextView mTitleTv, mDetailTv;
     ImageView mImageIv;
     Bitmap bitmap;
-    Button mSaveBtn, mShareBtn, mWiki, mWeb, mMap;
-    OutputStream outputStream;
+    Button mSaveBtn, mShareBtn, mWikiBtn, mWeb, mMap;
 
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
-
-    FirebaseDatabase mFirebaseDatabase;
-    DatabaseReference mRefWiki;
-    DatabaseReference mRefWeb;
-    DatabaseReference mRefMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +74,7 @@ public class PostDetailActivity extends AppCompatActivity {
         mImageIv = findViewById(R.id.imageViewDetail);
         mSaveBtn = findViewById(R.id.saveBtn);
         mShareBtn = findViewById(R.id.shareBtn);
-        mWiki = findViewById(R.id.wikiBtn);
+        mWikiBtn = findViewById(R.id.wikiBtn);
         mWeb = findViewById(R.id.webBtn);
         mMap = findViewById(R.id.mapBtn);
 
@@ -90,86 +90,36 @@ public class PostDetailActivity extends AppCompatActivity {
         mDetailTv.setText(desc);
         Picasso.get().load(image).into(mImageIv);
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        //mRef = mFirebaseDatabase.getReference("Data");
-        //String s = mRef.getRef().getKey();
-        //mRefWiki = mRef.child("01").child("wiki");
-
-        mRefWiki = mFirebaseDatabase.getReference("Data").child("01").child("wiki");
-
-        mRefWiki.addValueEventListener(new ValueEventListener() {
+        mWikiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    final String value = dataSnapshot.getValue(String.class);
-                    mWiki.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(value));
-                            startActivity(i);
-                        }
-                    });
-
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(wiki));
+                startActivity(i);
             }
+        });
 
+        mWeb.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(web));
+                startActivity(i);
+            }
+        });
 
+        mMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
+                startActivity(i);
             }
         });
 
 
-        mRefWeb = mFirebaseDatabase.getReference("Data").child("01").child("website");
-
-        mRefWeb.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String value = dataSnapshot.getValue(String.class);
-                mWeb.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(value));
-                        startActivity(i);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-        mRefMap = mFirebaseDatabase.getReference("Data").child("01").child("map");
-
-        mRefMap.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String value = dataSnapshot.getValue(String.class);
-                mMap.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(value));
-                        startActivity(i);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
                     if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
                         String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                         requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
@@ -189,43 +139,76 @@ public class PostDetailActivity extends AppCompatActivity {
         mShareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent myIntent = new Intent(Intent.ACTION_SEND);
-                myIntent.setType("text/plain");
-                String shareBody = "Share this brand with other people";
-                myIntent.putExtra(Intent.EXTRA_SUBJECT, shareBody);
-                myIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-                startActivity(Intent.createChooser(myIntent, "Share using"));
+                shareImage();
             }
         });
     }
 
-    private void saveImage(){
-        bitmap = ((BitmapDrawable)mImageIv.getDrawable()).getBitmap();
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
-                Locale.getDefault()).format(System.currentTimeMillis());
 
-        File path = Environment.getExternalStorageDirectory().getAbsoluteFile();
-
-        File dir = new File(path + "/Brand");
-        dir.mkdirs();
-
-        String imageName = timeStamp + ".PNG";
-        File file = new File(dir, imageName);
-        FileOutputStream out = null;
-
-        Toast.makeText(PostDetailActivity.this, "Saved abc", Toast.LENGTH_SHORT).show();
+    private void shareImage() {
+        Drawable myDrawable = mImageIv.getDrawable();
+        Bitmap bitmap = ((BitmapDrawable)myDrawable).getBitmap();
 
         try {
-            out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.flush();
-            out.close();
-            Toast.makeText(this, imageName + " saved to" + dir, Toast.LENGTH_SHORT).show();
+            File file = new File(PostDetailActivity.this.getExternalCacheDir(),"myImage.png");
+            FileOutputStream fOut = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 80, fOut);
+            fOut.flush();
+            fOut.close();
+            file.setReadable(true, false);
+
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+            intent.setType("image/png");
+            startActivity(Intent.createChooser(intent,"Share Image Via"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Toast.makeText(PostDetailActivity.this, "File not found", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (Exception e){
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+
+    }
+
+    private void saveImage(){
+        BitmapDrawable drawable = (BitmapDrawable) mImageIv.getDrawable();
+        bitmap = drawable.getBitmap();
+
+        FileOutputStream outputStream = null;
+
+        File sdCard = Environment.getExternalStorageDirectory();
+        File directory = new File(sdCard.getAbsolutePath() + "/Brand");
+
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+
+        String fileName = String.format("%d.jpg", System.currentTimeMillis());
+        File outFile = new File(directory, fileName);
+
+        Toast.makeText(PostDetailActivity.this, "Image saved successfully", Toast.LENGTH_SHORT).show();
+
+        try {
+            outputStream = new FileOutputStream(outFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            outputStream.flush();
+            outputStream.close();
+
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            intent.setData(Uri.fromFile(outFile));
+            sendBroadcast(intent);
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+
 
 
     @Override
