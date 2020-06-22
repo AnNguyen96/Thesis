@@ -40,7 +40,7 @@
             <TextView
                 android:id="@+id/descriptionDetail"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="120dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:text="Description"
@@ -54,87 +54,67 @@
                 android:layout_height="wrap_content"
                 android:gravity="bottom"
                 android:padding="10dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/saveBtn"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/custom_button"
-                    android:textAllCaps="false"
-                    android:textSize="18sp"
-                    android:textColor="#FA71CD"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:text="Save" />
-
-                <Button
-                    android:id="@+id/shareBtn"
-                    style="?android:attr/buttonStyleSmall"
-                    android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/custom_button"
-                    android:textAllCaps="false"
-                    android:textSize="18sp"
-                    android:textColor="#FA71CD"
-                    android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:text="Share" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:padding="10dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <Button
                     android:id="@+id/wikiBtn"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/custom_button"
                     android:textAllCaps="false"
                     android:textSize="18sp"
                     android:textColor="#FA71CD"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
                     android:text="Wiki" />
 
                 <Button
                     android:id="@+id/webBtn"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/custom_button"
                     android:textAllCaps="false"
                     android:textSize="18sp"
                     android:textColor="#FA71CD"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
                     android:text="Website" />
 
                 <Button
                     android:id="@+id/mapBtn"
                     style="?android:attr/buttonStyleSmall"
-                    android:layout_width="100dp"
+                    android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/custom_button"
                     android:textAllCaps="false"
                     android:textSize="18sp"
                     android:textColor="#FA71CD"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:text="Map" />
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Location" />
+
+                <Button
+                    android:id="@+id/shareBtn"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/custom_button"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    android:textColor="#FA71CD"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Share" />
 
             </LinearLayout>
 

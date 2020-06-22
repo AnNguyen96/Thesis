@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +54,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     TextView mTitleTv, mDetailTv;
     ImageView mImageIv;
-    Bitmap bitmap;
-    Button mSaveBtn, mShareBtn, mWikiBtn, mWeb, mMap;
+    Button mWikiBtn, mWeb, mMap, mShareBtn;
 
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
 
@@ -72,14 +72,13 @@ public class PostDetailActivity extends AppCompatActivity {
         mTitleTv = findViewById(R.id.nameDetail);
         mDetailTv = findViewById(R.id.descriptionDetail);
         mImageIv = findViewById(R.id.imageViewDetail);
-        mSaveBtn = findViewById(R.id.saveBtn);
-        mShareBtn = findViewById(R.id.shareBtn);
         mWikiBtn = findViewById(R.id.wikiBtn);
         mWeb = findViewById(R.id.webBtn);
         mMap = findViewById(R.id.mapBtn);
+        mShareBtn = findViewById(R.id.shareBtn);
 
 
-        String image = getIntent().getStringExtra("image");
+        final String image = getIntent().getStringExtra("image");
         String title = getIntent().getStringExtra("title");
         String desc = getIntent().getStringExtra("description");
         final String wiki = getIntent().getStringExtra("wiki");
@@ -93,143 +92,65 @@ public class PostDetailActivity extends AppCompatActivity {
         mWikiBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(wiki));
-                startActivity(i);
+                try{
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(wiki));
+                    startActivity(i);
+                }catch (Exception e){
+                    Toast.makeText(PostDetailActivity.this, "This brand will update wikipedia soon", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         mWeb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(web));
-                startActivity(i);
+                try {
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(web));
+                    startActivity(i);
+                }catch (Exception e){
+                    Toast.makeText(PostDetailActivity.this, "This brand will update website soon", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
         mMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
-                startActivity(i);
+                try{
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
+                    startActivity(i);
+                }catch (Exception e){
+                    Toast.makeText(PostDetailActivity.this, "This brand will update location soon", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
-
-
-
-        mSaveBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                    if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
-                        String[] permission = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                        requestPermissions(permission, WRITE_EXTERNAL_STORAGE_CODE);
-                    }
-                    else{
-                        saveImage();
-                    }
-                }
-                else{
-                    saveImage();
-                }
-            }
-        });
-
-
 
         mShareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                shareImage();
+            public void onClick(View v) {
+                try{
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, web);
+                    sendIntent.setType("text/plain");
+
+                    Intent shareIntent = Intent.createChooser(sendIntent, "Share with friends..");
+                    startActivity(shareIntent);
+                }catch (Exception e){
+                    Toast.makeText(PostDetailActivity.this, "This brand will update share soon", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
-
-
-    private void shareImage() {
-        Drawable myDrawable = mImageIv.getDrawable();
-        Bitmap bitmap = ((BitmapDrawable)myDrawable).getBitmap();
-
-        try {
-            File file = new File(PostDetailActivity.this.getExternalCacheDir(),"myImage.png");
-            FileOutputStream fOut = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 80, fOut);
-            fOut.flush();
-            fOut.close();
-            file.setReadable(true, false);
-
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
-            intent.setType("image/png");
-            startActivity(Intent.createChooser(intent,"Share Image Via"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            Toast.makeText(PostDetailActivity.this, "File not found", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    private void saveImage(){
-        BitmapDrawable drawable = (BitmapDrawable) mImageIv.getDrawable();
-        bitmap = drawable.getBitmap();
-
-        FileOutputStream outputStream = null;
-
-        File sdCard = Environment.getExternalStorageDirectory();
-        File directory = new File(sdCard.getAbsolutePath() + "/Brand");
-
-        if(!directory.exists()){
-            directory.mkdirs();
-        }
-
-        String fileName = String.format("%d.jpg", System.currentTimeMillis());
-        File outFile = new File(directory, fileName);
-
-        Toast.makeText(PostDetailActivity.this, "Image saved successfully", Toast.LENGTH_SHORT).show();
-
-        try {
-            outputStream = new FileOutputStream(outFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-            outputStream.flush();
-            outputStream.close();
-
-            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            intent.setData(Uri.fromFile(outFile));
-            sendBroadcast(intent);
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
 
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case WRITE_EXTERNAL_STORAGE_CODE: {
-                if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    saveImage();
-                }
-                else{
-                    Toast.makeText(this, "enable permission to save image", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
 
 }
