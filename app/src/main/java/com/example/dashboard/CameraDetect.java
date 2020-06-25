@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
@@ -32,12 +33,15 @@ import java.util.List;
 
 public class CameraDetect extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
+    private static final String TAG = CameraDetect.class.getSimpleName();
     CameraBridgeViewBase cameraBridgeViewBase;
     BaseLoaderCallback baseLoaderCallback;
     boolean startYolo = false;
     boolean firstTimeYolo = false;
     int frameloop = 0;
     Net tinyYolo;
+    String printthis = "a";
+
 
     public void YOLO(View Button){
 
@@ -45,8 +49,8 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
             startYolo = true;
             if (!firstTimeYolo){
                 firstTimeYolo = true;
-                String tinyYoloCfg = Environment.getExternalStorageDirectory() + "/Download/yolo-obj.cfg" ;
-                String tinyYoloWeights = Environment.getExternalStorageDirectory() + "/Download/bkfull.weights";
+                String tinyYoloCfg = Environment.getExternalStorageDirectory() + "/Download/yolo-obj10.cfg" ;
+                String tinyYoloWeights = Environment.getExternalStorageDirectory() + "/Download/yolo-obj10_last.weights";
                 tinyYolo = Dnn.readNetFromDarknet(tinyYoloCfg, tinyYoloWeights);
             }
         }
@@ -68,6 +72,9 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_detect);
 
+        String b = String.valueOf(startYolo);
+        System.out.println("TAG= " + TAG);
+        Log.d(TAG, b );
 
         cameraBridgeViewBase = (JavaCameraView)findViewById(R.id.CameraView);
         cameraBridgeViewBase.setVisibility(SurfaceView.VISIBLE);
@@ -104,6 +111,7 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         /*        frameloop = frameloop + 1;*/
         Mat frame = inputFrame.rgba();
+
 
         if (startYolo) {
 
@@ -210,6 +218,7 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
                 for (int i = 0; i < ind.length; ++i) {
 
                     int idx = ind[i];
+                    System.out.print(idx);
                     Rect box = boxesArray[idx];
 
                     int idGuy = clsIds.get(idx);
@@ -217,7 +226,8 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
                     float conf = confs.get(idx);
 
 
-                    List<String> cocoNames = Arrays.asList("Bach Khoa");
+                    List<String> cocoNames = Arrays.asList("BachKhoa","CircleK","Highland","TGDD","MiniStop","Aeon","SevenEleven",
+                            "PhucLong","ShopGo","Starbucks");
 
 
 
@@ -225,34 +235,24 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
 
 
 
-                    Imgproc.putText(frame,cocoNames.get(idGuy) + " " + intConf + "%",box.tl(),Core.FONT_HERSHEY_SIMPLEX, 2, new Scalar(255,255,0),2);
+                    Imgproc.putText(frame,cocoNames.get(idGuy) + " " + intConf + "%",box.tl(),Core.FONT_HERSHEY_SIMPLEX, 1, new Scalar(255,255,0),2);
 
 
 
                     Imgproc.rectangle(frame, box.tl(), box.br(), new Scalar(255, 0, 0), 2);
 
-
-
-
+                    Log.d(TAG, ""+ cocoNames.get(idGuy));
 
                 }
             }
-
-
-
-
-
-
-
-
-
         }
 
 
-/*        if(frameloop == 1) {
-            startYolo = false;
-        }*/
-        startYolo = false;
+//        if(frameloop == 1) {
+//            startYolo = false;
+//        }
+//        startYolo = false;
+        Log.d(TAG, "aaaaaaaaa" );
         return frame;
     }
 
@@ -264,8 +264,8 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
 
         if (startYolo){
 
-            String tinyYoloCfg = Environment.getExternalStorageDirectory() + "/Download/yolo-obj.cfg" ;
-            String tinyYoloWeights = Environment.getExternalStorageDirectory() + "/Download/bkfull.weights";
+            String tinyYoloCfg = Environment.getExternalStorageDirectory() + "/Download/yolo-obj10.cfg" ;
+            String tinyYoloWeights = Environment.getExternalStorageDirectory() + "/Download/yolo-obj10_last.weights";
 
             tinyYolo = Dnn.readNetFromDarknet(tinyYoloCfg, tinyYoloWeights);
 

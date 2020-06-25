@@ -46,6 +46,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btnGallery = findViewById(R.id.btngallery);
+        btnGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentGallery = new Intent(MainActivity.this, GalleryDetect.class);
+                startActivity(intentGallery);
+            }
+        });
+
         Button btnMap = (Button) findViewById(R.id.btnmap);
         btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
