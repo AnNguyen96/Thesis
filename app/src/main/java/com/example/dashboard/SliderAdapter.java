@@ -29,15 +29,15 @@ public class SliderAdapter extends PagerAdapter {
     };
 
     public String[] slide_heading = {
-            "DETECT LOGO FROM CAMERA",
-            "DETECT LOGO FROM GALLERY",
+            "REALTIME DETECTION",
+            "DETECT LOGO FROM PICTURE",
             "MAP",
             "LIST OF BRANDS"
     };
 
     public String[] slide_descript = {
-            "when click this button, camera will open, you should move camera to position which has a logo and click detect button.",
-            "Just the same with first button, but you can choose picture which contains logo from gallery to detect.",
+            "when click this button, moving camera to position which has a logo and click detect button, it will livestream by catch each frame of the camera.",
+            "Just the same with first button, but you can choose picture which contains logo to detect.",
             "Map will show with some basic features such as searching, changing type of map, showing your current location, guiding directions, etc.",
             "Show list of brands, you can search, sort, save or share brands, even upload, update and delete brands."
     };

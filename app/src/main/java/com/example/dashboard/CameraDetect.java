@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -34,12 +35,12 @@ import java.util.List;
 
 public class CameraDetect extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
 
-    //private static final String TAG = CameraDetect.class.getSimpleName();
     CameraBridgeViewBase cameraBridgeViewBase;
     BaseLoaderCallback baseLoaderCallback;
     boolean startYolo = false;
     boolean firstTimeYolo = false;
     Net tinyYolo;
+//    Mat mat;
 
     public void YOLO(View Button){
 
@@ -76,6 +77,9 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         cameraBridgeViewBase = (JavaCameraView)findViewById(R.id.CameraView);
         cameraBridgeViewBase.setVisibility(SurfaceView.VISIBLE);
         cameraBridgeViewBase.setCvCameraViewListener(this);
@@ -111,19 +115,17 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         /*        frameloop = frameloop + 1;*/
         Mat frame = inputFrame.rgba();
-        Core.transpose(frame,frame);
-        Core.flip(frame,frame,1);
+//        Core.rotate(frame,frame,Core.ROTATE_90_CLOCKWISE);
+//        Core.flip(frame,frame,1);
+
+
 
         if (startYolo) {
-
-
 
             Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGBA2RGB);
 
 
-
-            Mat imageBlob = Dnn.blobFromImage(frame, 1.0/255.0, new Size(416,416),new Scalar(0, 0, 0),/*swapRB*/true, /*crop*/false);
-
+            Mat imageBlob = Dnn.blobFromImage(frame, 1.0/255.0, new Size(416,416),new Scalar(0, 0, 0),/*swapRB*/false, /*crop*/false);
 
 
             tinyYolo.setInput(imageBlob);
@@ -140,7 +142,7 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
             tinyYolo.forward(result,outBlobNames);
 
 
-            float confThreshold = 0.1f;
+            float confThreshold = 0.3f;
 
 
 
@@ -243,13 +245,12 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
 
 
 
-                    Imgproc.rectangle(frame, box.tl(), box.br(), new Scalar(0, 0, 0), 2);
+                    Imgproc.rectangle(frame, box.tl(), box.br(), new Scalar(255, 0, 0), 2);
 
 
                 }
             }
         }
-
 
         return frame;
     }
@@ -263,7 +264,7 @@ public class CameraDetect extends AppCompatActivity implements CameraBridgeViewB
         if (startYolo){
 
             String tinyYoloCfg = Environment.getExternalStorageDirectory() + "/Download/yolo-obj10.cfg" ;
-            String tinyYoloWeights = Environment.getExternalStorageDirectory() +"/Download/yolo-obj10_last.weights";
+            String tinyYoloWeights = Environment.getExternalStorageDirectory() + "/Download/yolo-obj10_last.weights";
 
             tinyYolo = Dnn.readNetFromDarknet(tinyYoloCfg, tinyYoloWeights);
 
